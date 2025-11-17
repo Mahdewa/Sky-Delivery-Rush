@@ -4,10 +4,13 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+public enum Platform { Desktop, Mobile }
+
 public class GameManager : MonoBehaviour
 {
     // Singleton pattern
     public static GameManager Instance { get; private set; }
+    public static Platform selectedPlatform;
 
     [Header("Wind Mechanic")]
     public float minWindDelay = 10f; // Waktu minimal antar angin
@@ -34,8 +37,11 @@ public class GameManager : MonoBehaviour
 
     [Header("UI Panels")]
     public GameObject mainMenuPanel;
+    public GameObject platformSelectPanel;
     public GameObject hudPanel; // Panel yang berisi Score, Paket, dll.
+    public GameObject mobileControlsPanel;
     public GameObject gameOverPanel;
+    public TextMeshProUGUI finalScoreText;
 
     [Header("Gameplay Objects")]
     public GameObject playerObject; // Prefab PlayerBalloon Anda
@@ -74,14 +80,31 @@ public class GameManager : MonoBehaviour
         hudPanel.SetActive(false);
         gameOverPanel.SetActive(false);
 
-        if (playerObject != null)
-        {
-            playerObject.SetActive(false);
-        }
+        // if (playerObject != null)
+        // {
+        //     playerObject.SetActive(false);
+        // }
 
         // Pastikan efek angin mati
         if (windEffectFastVisual != null) windEffectFastVisual.SetActive(false);
         if (windEffectSlowVisual != null) windEffectSlowVisual.SetActive(false);
+    }
+
+    public void ShowPlatformSelect()
+    {
+        mainMenuPanel.SetActive(false);
+        platformSelectPanel.SetActive(true);
+    }
+
+    // Fungsi ini akan dipanggil oleh tombol Desktop/Mobile
+    public void SelectPlatform(int platformIndex)
+    {
+        // 0 = Desktop, 1 = Mobile
+        selectedPlatform = (Platform)platformIndex; 
+        
+        // Sembunyikan panel pilihan dan mulai game
+        platformSelectPanel.SetActive(false);
+        StartGame(); // Panggil fungsi StartGame yang sudah ada
     }
 
     public void StartGame()
@@ -124,6 +147,15 @@ public class GameManager : MonoBehaviour
         // 6. MULAI GAME LOGIC
         StopAllCoroutines(); // Hentikan coroutine lama (penting untuk Retry)
         StartCoroutine(WindSpawnerRoutine()); // Mulai spawner angin
+
+        if (selectedPlatform == Platform.Mobile)
+        {
+            mobileControlsPanel.SetActive(true);
+        }
+        else
+        {
+            mobileControlsPanel.SetActive(false);
+        }
     }
 
     private void Update()
@@ -289,6 +321,13 @@ public class GameManager : MonoBehaviour
         {
             mainMenuPanel.SetActive(true);
         }
+
+        if (playerObject != null)
+        {
+            // Pindahkan pemain ke posisi spawn agar posisinya benar
+            playerObject.transform.position = playerSpawnPoint.position;
+            playerObject.SetActive(true);
+        }
     }
 
     // Fungsi baru untuk Game Over
@@ -302,6 +341,12 @@ public class GameManager : MonoBehaviour
 
         // 2. TUKAR PANEL UI
         hudPanel.SetActive(false); // Sembunyikan Skor/Paket
+
+        if (finalScoreText != null)
+        {
+            finalScoreText.text = "Your Score " + score;
+        }
+
         gameOverPanel.SetActive(true); 
 
         // 3. Hide pemain

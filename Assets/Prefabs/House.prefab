@@ -147,3 +147,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 985230e500cf48845b55a94af1e47a67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  idleScrollSpeed: 0.5
+  destroyPositionX: -20

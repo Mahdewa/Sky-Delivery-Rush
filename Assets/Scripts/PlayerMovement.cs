@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public static PlayerMovement Instance { get; private set; }
+    private bool isLoweringButtonHeld = false;
+
     [Header("Altitude Positions")]
     public float highY = 2f;
     public float midY = 0f;
@@ -17,6 +20,11 @@ public class PlayerMovement : MonoBehaviour
 
     private float targetY;
 
+    void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         // default position = High
@@ -25,9 +33,27 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        HandleAltitudeInput();
+        if (Time.timeScale == 0f)
+        {
+            HandleAltitudeInput(); // Ini akan menjalankan 'return'
+            MoveToTargetAltitude();
+            return;
+        }
+
+        // Hanya jalankan input keyboard/mouse jika platform Desktop
+        if (GameManager.selectedPlatform == Platform.Desktop)
+        {
+            HandleAltitudeInput();
+            HandlePackageDrop();
+        }
+        else // (Berarti platformnya Mobile)
+        {
+            // TAMBAHKAN FUNGSI BARU INI:
+            HandleMobileAltitudeInput();
+        }
+
+        // Pergerakan visual balon (Lerp) harus selalu berjalan
         MoveToTargetAltitude();
-        HandlePackageDrop();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -46,13 +72,19 @@ public class PlayerMovement : MonoBehaviour
             }
 
             // Hancurkan pemain (atau mainkan animasi hancur)
-            Destroy(gameObject); 
+            // Destroy(gameObject); 
         }
     }
 
     void HandleAltitudeInput()
     {
-        if (Input.GetKey(KeyCode.Space) || Input.touchCount > 0) // placeholder untuk tombol
+        if (Time.timeScale == 0f)
+        {
+            targetY = highY;
+            return; // Langsung keluar
+        }
+
+        if (Input.GetKey(KeyCode.Space)) // placeholder untuk tombol
         {
             // Jika lagi di High → turun ke Mid
             // Jika sudah Mid → turun ke Low
@@ -77,20 +109,15 @@ public class PlayerMovement : MonoBehaviour
 
     void HandlePackageDrop()
     {
+        if (Time.timeScale == 0f)
+        {
+            return; // Langsung keluar dari fungsi ini
+        }
+
         // Cek input untuk drop paket (Tap)
         if (Input.GetKeyDown(dropKey))
         {
             DropPackage();
-        }
-
-        // Deteksi sentuhan di sisi kanan layar
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began && touch.position.x > Screen.width / 2)
-            {
-                DropPackage();
-            }
         }
     }
 
@@ -114,6 +141,43 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             Debug.LogWarning("Package Prefab atau Drop Point belum di-set di Inspector!");
+        }
+    }
+
+    public void OnDropButtonPress()
+    {
+        if (Time.timeScale == 0f) return;
+        DropPackage(); // Panggil fungsi private drop Anda
+    }
+
+    // Dipanggil saat tombol 'Lower' DITEKAN (PointerDown)
+    public void OnLowerButtonDown()
+    {
+        if (Time.timeScale == 0f) return;
+
+        isLoweringButtonHeld = true;
+    }
+
+    // Dipanggil saat tombol 'Lower' DILEPAS (PointerUp)
+    public void OnLowerButtonUp()
+    {
+        if (Time.timeScale == 0f) return;
+        
+        isLoweringButtonHeld = false;
+    }
+
+    void HandleMobileAltitudeInput()
+    {
+        // Jika tombol sedang ditahan
+        if (isLoweringButtonHeld)
+        {
+            // Langsung set target ke paling bawah
+            targetY = lowY;
+        }
+        else
+        {
+            // Jika tombol dilepas, kembali ke atas
+            targetY = highY;
         }
     }
 }

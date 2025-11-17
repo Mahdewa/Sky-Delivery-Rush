@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class BackgroundScroll : MonoBehaviour
 {
-    [Tooltip("Pengali kecepatan. 1 = sama cepat dgn game. 0.5 = setengah kecepatan (parallax)")]
-    public float parallaxMultiplier = 1f; // <-- VARIABEL BARU
+    [Tooltip("Pengali kecepatan gameplay. 1 = sama cepat dgn game. 0.5 = setengah kecepatan (parallax).")]
+    public float parallaxMultiplier = 1f;
+
+    [Tooltip("Kecepatan saat di Main Menu (idle). Biarkan 0 jika ingin diam.")]
+    public float idleScrollSpeed = 0.5f; // <-- VARIABEL BARU
 
     private float length;
     private Transform cam;
@@ -16,16 +19,31 @@ public class BackgroundScroll : MonoBehaviour
 
     private void Update()
     {
-        // 1. Ambil kecepatan dasar dari GameManager
-        float baseSpeed = GameManager.Instance.currentScrollSpeed;
+        // Variabel untuk menampung kecepatan dan waktu
+        float speedToUse;
+        float timeToUse;
 
-        // 2. Hitung kecepatan layer ini (ini adalah permintaan Anda)
-        float speed = baseSpeed * parallaxMultiplier; 
+        // Cek apakah game sedang berjalan atau di-pause (Main Menu/Game Over)
+        if (Time.timeScale == 0f)
+        {
+            // Game sedang di-pause: Gunakan kecepatan IDLE
+            speedToUse = idleScrollSpeed;
+            timeToUse = Time.unscaledDeltaTime; // Waktu yang mengabaikan pause
+        }
+        else
+        {
+            // Game sedang berjalan: Gunakan kecepatan dari GameManager
+            speedToUse = GameManager.Instance.currentScrollSpeed;
+            timeToUse = Time.deltaTime; // Waktu normal
+        }
 
-        // 3. Gerakkan layer ini (logika Anda)
-        transform.position += Vector3.left * speed * Time.deltaTime;
+        // 1. Hitung kecepatan akhir (sudah termasuk parallax)
+        float finalSpeed = speedToUse * parallaxMultiplier;
 
-        // 4. Looping (logika Anda)
+        // 2. Gerakkan layer ini (menggunakan variabel yang sudah kita tentukan)
+        transform.position += Vector3.left * finalSpeed * timeToUse;
+
+        // 3. Looping (logika Anda)
         if (cam.position.x - transform.position.x >= length)
         {
             transform.position += Vector3.right * length * 2f;
