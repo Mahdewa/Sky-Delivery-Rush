@@ -61,8 +61,6 @@ public class PlayerMovement : MonoBehaviour
         // Cek apakah yang kita tabrak punya tag "Bird"
         if (other.CompareTag("Bird"))
         {
-            // GAME OVER
-            // Kita hancurkan burungnya agar terlihat meledak
             Destroy(other.gameObject); 
 
             // Panggil Game Over di GameManager
@@ -128,6 +126,8 @@ public class PlayerMovement : MonoBehaviour
             // MINTA IZIN DULU KE GAMEMANAGER
             if (GameManager.Instance != null && GameManager.Instance.UsePackage())
             {
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("DropPackage");
+
                 // Jika diizinkan (paket masih ada), baru buat paketnya
                 Instantiate(packagePrefab, dropPoint.position, dropPoint.rotation);
             }

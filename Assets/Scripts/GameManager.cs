@@ -92,6 +92,8 @@ public class GameManager : MonoBehaviour
 
     public void ShowPlatformSelect()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Button");
+
         mainMenuPanel.SetActive(false);
         platformSelectPanel.SetActive(true);
     }
@@ -99,6 +101,8 @@ public class GameManager : MonoBehaviour
     // Fungsi ini akan dipanggil oleh tombol Desktop/Mobile
     public void SelectPlatform(int platformIndex)
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Button");
+        
         // 0 = Desktop, 1 = Mobile
         selectedPlatform = (Platform)platformIndex; 
         
@@ -250,7 +254,10 @@ public class GameManager : MonoBehaviour
         // 1. Mengurangi Paket
         int packagesToLose = Random.Range(1, 4); // Menghasilkan 1, 2, atau 3 [cite: 48, 51]
         LosePackages(packagesToLose);
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Wind");
         Debug.Log("ANGIN! Kehilangan " + packagesToLose + " paket!");
+
+
 
         // 2. Mengubah Kecepatan
         float duration = Random.Range(2f, 4f); // Durasi angin 2-4 detik [cite: 47, 50]
@@ -310,6 +317,8 @@ public class GameManager : MonoBehaviour
 
     public void RetryGame()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Button");
+
         // 1. Sembunyikan panel game over
         if (gameOverPanel != null)
         {
@@ -333,6 +342,7 @@ public class GameManager : MonoBehaviour
     // Fungsi baru untuk Game Over
     public void HandleGameOver(string reason)
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("GameOver");
         Debug.Log("GAME OVER: " + reason);
         
         // 1. HENTIKAN SEMUA PROSES GAME
@@ -359,6 +369,8 @@ public class GameManager : MonoBehaviour
     // Fungsi baru untuk menambah paket
     public void AddPackages(int amount)
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Resupply");
+
         currentPackages += amount;
         UpdatePackageUI(); // Langsung update UI
         Debug.Log("PAKET BERTAMBAH! +" + amount);
@@ -366,6 +378,7 @@ public class GameManager : MonoBehaviour
 
     public void QuitGame()
     {
+        if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Button");
         Debug.Log("Keluar dari game...");
         Application.Quit();
     }

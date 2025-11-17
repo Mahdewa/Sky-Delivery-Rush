@@ -63,6 +63,8 @@ public class BirdSpawner : MonoBehaviour
                 // Buat (Instantiate) burung
                 Instantiate(birdPrefab, spawnPosition, Quaternion.identity);
 
+                if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("Bird");
+
                 // Jika berkelompok, beri jeda sedikit antar burung
                 if (spawnCount > 1)
                 {

@@ -9,6 +9,8 @@ public class Package : MonoBehaviour
         // Nanti kita akan beri tag "House" pada rumah
         if (other.CompareTag("House"))
         {
+            if (AudioManager.Instance != null) AudioManager.Instance.PlaySFX("DropSuccess");
+
             Debug.Log("Paket Kena Rumah! +10 Skor"); 
             
             if (GameManager.Instance != null)

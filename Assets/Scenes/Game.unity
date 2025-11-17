@@ -1341,11 +1341,25 @@ MonoBehaviour:
   bgmSounds:
   - name: MainMenu
     clip: {fileID: 8300000, guid: fa50b7899f2d7494484259b9dfeb9980, type: 3}
-  sfxSounds: []
+  sfxSounds:
+  - name: Bird
+    clip: {fileID: 8300000, guid: d4ff2f4f53844974da4fbc95be2dd661, type: 3}
+  - name: Button
+    clip: {fileID: 8300000, guid: e2a61d22293f520489f84bf7e2ad7da3, type: 3}
+  - name: DropPackage
+    clip: {fileID: 8300000, guid: fb96b8517508ac443950fa8859121966, type: 3}
+  - name: GameOver
+    clip: {fileID: 8300000, guid: ff0741028e8d0464fad7ce188c736344, type: 3}
+  - name: DropSuccess
+    clip: {fileID: 8300000, guid: e0eb3893cad2d724bbeb9425ad1a3821, type: 3}
+  - name: Resupply
+    clip: {fileID: 8300000, guid: 04bf9fcf6e40e2242a8c9a1ead3c4cd3, type: 3}
+  - name: Wind
+    clip: {fileID: 8300000, guid: 1db03a57ae48e5f4f8877271c0e1e115, type: 3}
   bgmSource: {fileID: 377057914}
   sfxSource: {fileID: 377057913}
   defaultBGMVolume: 0.5
-  defaultSFXVolume: 0.5
+  defaultSFXVolume: 1
 --- !u!82 &377057913
 AudioSource:
   m_ObjectHideFlags: 0
